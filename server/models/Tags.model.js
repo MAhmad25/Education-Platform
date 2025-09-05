@@ -8,7 +8,6 @@ const tagsSchema = new mongoose.Schema({
       desc: {
             type: String,
             trim: true,
-            required: true,
       },
       course: {
             type: mongoose.Schema.Types.ObjectId,
