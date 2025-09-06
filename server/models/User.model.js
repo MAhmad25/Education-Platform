@@ -17,13 +17,16 @@ const userSchema = new mongoose.Schema(
                   trim: true,
                   required: true,
             },
+            phone: {
+                  type: Number,
+            },
             profilePic: {
                   type: String,
                   trim: true,
             },
             accountType: {
                   type: String,
-                  enum: ["Admin", "Student", "Instructor"],
+                  enum: ["admin", "student", "instructor"],
                   required: true,
             },
             userDetails: {
