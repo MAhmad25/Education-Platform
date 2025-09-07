@@ -79,3 +79,8 @@ const login = async (req, res) => {
             .json({ message: "Welcome to your profile" });
 };
 // Change Password Controller
+
+const changePassword = async (req, res) => {
+      // Get the old password new password and confirm password from the req.body
+      // check if old password is correct from the database
+};
