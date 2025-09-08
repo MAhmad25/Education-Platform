@@ -142,3 +142,5 @@ const changePassword = async (req, res) => {
       // Get the old password new password and confirm password from the req.body
       // check if old password is correct from the database
 };
+
+export { sendOTP, login, createAccount, resetPassword, resetPasswordToken, changePassword };
