@@ -2,8 +2,10 @@ const UserModel = require("../models/User.model");
 const OTPModel = require("../models/OTP.model");
 const ProfileModel = require("../models/Profile.model");
 const { generateNumericOtp } = require("../utils/otpGenerator");
+const mailSender = require("../utils/mailSender");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 require("dotenv").config();
 // Send OTP controller
 const sendOTP = async (req, res) => {
@@ -13,7 +15,7 @@ const sendOTP = async (req, res) => {
       //Generate OTP
       const otp = generateNumericOtp();
       // Make a otp model
-      await OTPModel.create({ otp, email, used: true, purpose: "Verifying Email for the Signup" });
+      await OTPModel.create({ otp, email, used: true, purpose: "Email Verification Code" });
       res.status(201).json({
             success: true,
             message: "Email Verification Code is sent to your email",
@@ -67,8 +69,8 @@ const login = async (req, res) => {
       const isCorrect = await bcrypt.compare(password, isExisted.password);
       if (!isCorrect) return res.status(401).json({ message: "Email or password is incorrect !" });
       //create the token using jwt and store it in req.user and also in cookie
-      const token = jwt.sign({ email, id: isExisted._id }, process.env.SECRET, { expiresIn: "168h" });
-      req.user = token;
+      const token = jwt.sign({ email, id: isExisted._id, role: isExisted.accountType }, process.env.SECRET, { expiresIn: "168h" });
+      req.token = token;
       // Set the token in Cookie
       res.cookie("access_token", token, {
             httpOnly: true,
@@ -78,6 +80,62 @@ const login = async (req, res) => {
             // then send the user response
             .json({ message: "Welcome to your profile" });
 };
+
+const resetPasswordToken = async (req, res) => {
+      try {
+            // get the email from the body
+            const { email } = req.body;
+            // Validate Email
+            if (!email) return res.status(400).json({ message: "Email is required for Reseting Password !" });
+            // check if this email exist in database
+            const userExist = await UserModel.findOne({ email });
+            if (!userExist) return res.status(401).json({ message: "You email is invalid and cannot be used for reseting the password !" });
+            // generate the token using crypto
+            const token = crypto.randomUUID();
+            //update the UserModel with token and token ExpirationDate
+            await UserModel.findOneAndUpdate({ email }, { token, tokenExpire: Date.now() + 5 * 60 * 1000 });
+            // create the url
+            const url = `http://localhost:5173/reset-password/${token}`;
+            // send email with url link
+            const mailInfo = await mailSender(email, "Password Reset Email", `This is your password reset link: ${url} `);
+            console.log({ mailInfo });
+            res.status(200).json({ message: "Password Reset with Email sent successfully !" });
+      } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: "Unable to send the Email with url Check the resetPasswordToken controller " });
+      }
+};
+
+const resetPassword = async (req, res) => {
+      try {
+            // get the password , confirm password and token from the req.body
+            const { password, confirmPassword, token } = req.body;
+            //  validate if all the field is entered
+            if (!password || !confirmPassword || !token) return res.status(400).json({ message: "All fields are required !" });
+            // check if the password and confirm password is equal
+            if (password !== confirmPassword) return res.status(400).json({ message: "Password and confirm password field does not match  !" });
+            // find the user from the model on the basis of token
+            const user = await UserModel.findOne({ token });
+            // if not available handle it
+            if (!user) return res.status(400).json({ message: "Token value is invalid !" });
+            // also check if time expire of the token
+            if (Date.now() > user.tokenExpire) {
+                  // if time excedes handle it
+                  return res.status(401).json({ message: "Token expired ! Generate Another" });
+            }
+            // hashed the password
+            const salt = await bcrypt.genSalt(10);
+            const hashedPass = await bcrypt.hash(password, salt);
+            // update the password with updated field
+            await UserModel.findByIdAndUpdate(user._id, { password: hashedPass });
+            // return the response success
+            res.status(200).json({ message: "Password is updated Successfully !" });
+      } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: "Unable to update the password Check the resetPassword controller " });
+      }
+};
+
 // Change Password Controller
 
 const changePassword = async (req, res) => {

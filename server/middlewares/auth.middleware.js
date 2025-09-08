@@ -23,37 +23,31 @@ const isAuthenticated = async (req, res, next) => {
 };
 
 const isStudent = async (req, res, next) => {
-      // get the id from req.user
-      const id = req.user?.id;
-      // find the details from the DB using id
-      const user = await UserModel.findById(id);
+      // get the role from req.user.role
+      const role = req.user?.role;
       // check its accountType
       // if it does not match with students then return response 401
-      if (user.accountType !== "student") return res.status(401).json({ message: "Only Students can access these resources !" });
+      if (role !== "student") return res.status(401).json({ message: "Only Students can access these resources !" });
       //now easily called next()
       next();
 };
 
 const isInstructor = async (req, res, next) => {
-      // get the id from req.user
-      const id = req.user?.id;
-      // find the details from the DB using id
-      const user = await UserModel.findById(id);
+      // get the role from req.user.role
+      const role = req.user?.role;
       // check its accountType
       // if it does not match with students then return response 401
-      if (user.accountType !== "instructor") return res.status(401).json({ message: "Only instructors can access these resources !" });
+      if (role !== "instructor") return res.status(401).json({ message: "Only instructors can access these resources !" });
       //now easily called next()
       next();
 };
 
 const isAdmin = async (req, res, next) => {
-      // get the id from req.user
-      const id = req.user?.id;
-      // find the details from the DB using id
-      const user = await UserModel.findById(id);
+      // get the role from req.user.role
+      const role = req.user?.role;
       // check its accountType
       // if it does not match with students then return response 401
-      if (user.accountType !== "admin") return res.status(401).json({ message: "Only admin can access these resources !" });
+      if (role !== "admin") return res.status(401).json({ message: "Only admin can access these resources !" });
       //now easily called next()
       next();
 };

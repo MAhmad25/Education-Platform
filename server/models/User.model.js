@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema(
                   type: String,
                   trim: true,
             },
+            token: {
+                  type: String,
+            },
+            tokenExpire: {
+                  type: Date,
+            },
             accountType: {
                   type: String,
                   enum: ["admin", "student", "instructor"],

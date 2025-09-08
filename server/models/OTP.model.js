@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
-const { transporter } = require("../utils/mailTransporter");
-require("dotenv").config();
+const mailSender = require("../utils/mailSender");
 const otpSchema = new mongoose.Schema(
       {
             otp: {
@@ -36,16 +35,7 @@ const otpSchema = new mongoose.Schema(
 
 async function sendVerificationEmail(next) {
       try {
-            const info = await transporter.sendMail({
-                  from: `Edu-Tech | ${process.env.MAIL_USER} `,
-                  to: this.email,
-                  subject: this.purpose,
-                  html: ` <div style="font-family: Arial, sans-serif; padding: 18px;">
-        <h3 style="margin:0 0 8px 0;">Your verification code</h3>
-        <p style="font-size: 22px; letter-spacing: 2px;"><strong>${this.otp}</strong></p>
-        <p style="font-size: 13px; color: #666;">This code expires in 5 minutes.</p>
-      </div>`,
-            });
+            const info = await mailSender(this.email, this.purpose, `Here is your OTP Code:  ${this.otp}`);
             next();
       } catch (error) {
             console.log("Error while sending the email check the OTP Model: ", error.message);
