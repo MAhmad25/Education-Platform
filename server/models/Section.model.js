@@ -4,9 +4,11 @@ const sectionSchema = new mongoose.Schema({
             type: String,
             required: true,
       },
-      SubSections: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "SubSection",
-      },
+      subSections: [
+            {
+                  type: mongoose.Schema.Types.ObjectId,
+                  ref: "SubSection",
+            },
+      ],
 });
 module.exports = mongoose.model("Section", sectionSchema);
