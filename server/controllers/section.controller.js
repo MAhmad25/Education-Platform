@@ -27,8 +27,9 @@ const updatedSection = async (req, res) => {
 
 const deleteSection = async (req, res) => {
       try {
-            const { sectionId } = req?.params;
+            const { sectionId, courseID } = req.params;
             await SectionModel.findByIdAndDelete(sectionId);
+            await CourseModel.findByIdAndUpdate(courseID, { $pull: { courseContent: sectionId } });
             res.status(200).json({ message: "Section Deleted !" });
       } catch (error) {
             res.status(500).json({ message: "Unable to delete the Section ! Please check the Section Controller", error: error.message });

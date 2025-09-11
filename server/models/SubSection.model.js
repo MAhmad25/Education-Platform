@@ -17,13 +17,9 @@ const subSectionSchema = new mongoose.Schema({
       },
       videoUrl: {
             type: String,
-            required: true,
-            trim: true,
       },
       additionalUrl: {
             type: String,
-            required: true,
-            trim: true,
       },
 });
 module.exports = mongoose.model("SubSection", subSectionSchema);

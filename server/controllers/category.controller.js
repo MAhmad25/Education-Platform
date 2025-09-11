@@ -4,7 +4,7 @@ const createCategory = async (req, res) => {
             // get the data
             const { categoryName } = req.body;
             // validate data
-            if (!categoryName) return res.status(400).json({ message: "category name is required" });
+            if (!categoryName) return res.status(400).json({ message: "Category name is required" });
             //create the category object
             const newCategory = await CategoryModel.create({ name: categoryName }, { new: true });
             return res.status(201).json({ message: `${newCategory.name} Category created Sucessfully` });
