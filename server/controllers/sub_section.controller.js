@@ -9,7 +9,7 @@ const createSubSection = async (req, res) => {
             const videoUrl = req.file || "";
             // validate the data
             if (!title || !desc || !timeDuration || !videoUrl) return res.status(402).json({ message: "All field are required !" });
-            // Image upload karni ha cloudninary pe wo lazmi karna
+            // TODO: Image upload karni ha cloudninary pe wo lazmi karna
             // creating the subsection object
             const subSection = await SubSectionModel.create({ title, desc, timeDuration, videoUrl });
             // update the section with subSection id
