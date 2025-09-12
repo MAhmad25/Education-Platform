@@ -35,7 +35,7 @@ const deleteUser = async (req, res) => {
             res.status(500).json({ message: "Unable to delete the user account !", error: error.message });
       }
 };
-
+// get user Details🟣
 const getUserDetails = async (req, res) => {
       try {
             const id = req.user.id;
@@ -47,3 +47,5 @@ const getUserDetails = async (req, res) => {
             res.status(500).json({ message: "Unable to fetch the user details !", error: error.message });
       }
 };
+
+export { updateProfile, deleteUser, getUserDetails };
