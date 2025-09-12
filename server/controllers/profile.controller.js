@@ -40,8 +40,8 @@ const getUserDetails = async (req, res) => {
       try {
             const id = req.user.id;
             if (!id) return res.status(401).json({ message: "User is invalid" });
-            const userDetails = await UserModel.findById(id);
-            if (!user) return res.status(401).json({ message: "You cannot perform this action Make sure you are logged in" });
+            const userDetails = await UserModel.findById(id).populate("userDetails");
+            if (!userDetails) return res.status(401).json({ message: "You cannot perform this action Make sure you are logged in" });
             res.status(200).json({ message: "User Details", data: userDetails });
       } catch (error) {
             res.status(500).json({ message: "Unable to fetch the user details !", error: error.message });

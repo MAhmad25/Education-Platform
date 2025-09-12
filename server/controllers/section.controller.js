@@ -36,4 +36,15 @@ const deleteSection = async (req, res) => {
       }
 };
 
-export { createSection, updatedSection, deleteSection };
+const getAllSections = async (req, res) => {
+      try {
+            const allSections = await SectionModel.find().populate("subSections");
+            if (!allSections) return res.status(404).json({ message: "There is no Sections created" });
+            res.status(200).json({ message: "Here is your all Sections", data: allSections });
+      } catch (error) {
+            console.log(error.message);
+            return res.status(500).json({ message: "Unable to fetch all Sections from the DB" });
+      }
+};
+
+export { createSection, updatedSection, deleteSection, getAllSections };
