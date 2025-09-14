@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
             },
             profilePic: {
                   type: String,
-                  trim: true,
+                  // TODO: Add Profile Pic in Profile Controller
             },
             token: {
                   type: String,

@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 const ratingAndReviewsSchema = new mongoose.Schema({
       user: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
-            trim: true,
+            ref: "User",
       },
       ratings: {
             type: Number,
+            required: true,
       },
-      reviews: {
+      review: {
             type: String,
             trim: true,
       },

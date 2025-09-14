@@ -33,10 +33,12 @@ const courseSchema = new mongoose.Schema({
                   ref: "Section",
             },
       ],
-      ratingAndReviews: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Rating",
-      },
+      ratingAndReviews: [
+            {
+                  type: mongoose.Schema.Types.ObjectId,
+                  ref: "Rating",
+            },
+      ],
       category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Category",
