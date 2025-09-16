@@ -32,4 +32,32 @@ const getAllCourses = async (_, res) => {
       }
 };
 
-export { createCourse, getAllCourses };
+const getCourseDetails = async (req, res) => {
+      try {
+            const { courseID } = req.params;
+            if (!courseID) return res.status(404).json({ message: "Course ID is required!" });
+            const courseDetails = await CourseModel.findById(courseID)
+                  ?.populate("instructor")
+                  ?.populate({
+                        path: "courseContent",
+                        populate: {
+                              path: "subSections",
+                        },
+                  })
+                  ?.populate({
+                        path: "ratingAndReviews",
+                        populate: {
+                              path: "user",
+                              select: "username email profilePic",
+                        },
+                  })
+                  ?.populate({
+                        path: "enrolledStudents",
+                  });
+            if (!courseDetails) return res.status(404).json({ message: "Unable to find the Course ! ", error: error.message });
+            res.status(200).json({ message: "Here is all the Course Details", data: courseDetails });
+      } catch (error) {
+            res.status(500).json({ message: "Unable to get the course Details ! Please check the course Controller", error: error.message });
+      }
+};
+module.exports = { createCourse, getAllCourses, getCourseDetails };

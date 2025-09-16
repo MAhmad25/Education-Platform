@@ -1,12 +1,18 @@
 const RatingModel = require("../models/RatingAndReviews.model");
 const CourseModel = require("../models/Course.model");
 
-// Create Rating Controller
+// Create-Rating Controller
 const createRating = async (req, res) => {
       try {
             const { ratings, review = "", courseID } = req.body;
             if (!ratings || !courseID) return res.status(402).json({ message: "Rating Field  is required !" });
-            const ratingDetails = await RatingModel.create({ ratings, review, user: req.user.id }, { new: true });
+            const isEnrolled = await CourseModel.findOne({ _id: courseID, enrolledStudents: req.user.id });
+            if (!isEnrolled) return res.status(402).json({ message: "You cannot Review this course because you are not enrolled !" });
+            // Check if user has already reviewed this course
+            const alreadyReviewed = await RatingModel.findOne({ user: req.user.id, course: courseID });
+            if (alreadyReviewed) return res.status(400).json({ message: "You have already reviewed this course!" });
+            // Create new rating and review
+            const ratingDetails = await RatingModel.create({ ratings, review, user: req.user.id, course: isEnrolled._id });
             await CourseModel.findByIdAndUpdate(courseID, { $push: { ratingAndReviews: ratingDetails._id } });
             res.status(201).json({ message: "New Rating is created !", ratingDetails });
       } catch (error) {
