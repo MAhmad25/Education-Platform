@@ -143,4 +143,4 @@ const changePassword = async (req, res) => {
       // check if old password is correct from the database
 };
 
-export { sendOTP, login, createAccount, resetPassword, resetPasswordToken, changePassword };
+module.exports = { sendOTP, login, createAccount, resetPassword, resetPasswordToken, changePassword };

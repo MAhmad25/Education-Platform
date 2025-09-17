@@ -61,4 +61,4 @@ const updateRatings = async (req, res) => {
       }
 };
 
-export { createRating, getAverageRating, deleteRating, updateRatings };
+module.exports = { createRating, getAverageRating, deleteRating, updateRatings };

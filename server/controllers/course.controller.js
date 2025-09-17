@@ -1,6 +1,9 @@
 const CourseModel = require("../models/Course.model");
 const UserModel = require("../models/User.model");
 const CategoryModel = require("../models/Category.model");
+const path = require("path");
+const cloudinary = require("cloudinary").v2;
+// ! Create Course wale routes me multer ka middleware aye ga
 const createCourse = async (req, res) => {
       try {
             // get all the data from req.body
@@ -9,12 +12,19 @@ const createCourse = async (req, res) => {
             if (!courseName || !courseDesc || !whatYouWillLearn || !price || !category || !req.file) {
                   return res.status(402).json({ message: "All fields are required" });
             }
+            //  TODO Write the code for once to the utils functions
+            const thumbnail = req.file.path;
+            if (!thumbnail) return res.status(404).json({ message: "Thumbnail Picture is required !" });
+            const supportedFormat = [".png", ".jpeg", ".jpg"];
+            if (!supportedFormat.includes(path.extname(thumbnail))) return res.status(400).json({ message: "Only png , jpg and jpeg format type images can be used !" });
+            const tempFile = path.resolve(thumbnail);
+            const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "CloudinaryLearning", resource_type: "auto" });
+            //!End of Cloud Upload
             //Check if category exist in the database
             const categoryExist = await CategoryModel.findById(category);
-            if (!categoryExist) return res.status(402).json({ message: `Sorry ! ${category} like category does not exists ! Report to the Admin` });
-            //  TODO create the cloundinary url
+            if (!categoryExist) return res.status(400).json({ message: `Sorry ! ${category} like category does not exists ! Report to the Admin` });
             //Create the new Course in db
-            const newCourse = await CourseModel.create({ courseName, courseDesc, whatYouWillLearn, price, category, instructor: req.user.id });
+            const newCourse = await CourseModel.create({ courseName, courseDesc, whatYouWillLearn, price, category, instructor: req.user.id, thumbnail: cloudLink.secure_url });
             //set the newCourse ID in UserModel courses array
             await UserModel.findByIdAndUpdate(req.user.id, { $push: { courses: newCourse._id } });
             res.status(201).json({ message: "New Course created Successfully !", data: newCourse });

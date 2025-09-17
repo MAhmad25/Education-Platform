@@ -14,15 +14,27 @@ const createCategory = async (req, res) => {
       }
 };
 
-const getAllCategorys = async (req, res) => {
+const getAllCategorys = async (_, res) => {
       try {
-            const allcategorys = await CategoryModel.find();
+            const allcategorys = await CategoryModel.find({});
             if (!allcategorys) return res.status(500).json({ message: "There is no Categorys created" });
             res.status(200).json({ message: "Here is your all categorys", data: allcategorys });
       } catch (error) {
             console.log(error.message);
-            return res.status(500).json({ message: "Unable to fetch all Categorys from the DB" });
+            return res.status(500).json({ message: "Unable to fetch all Categorys from the DB", error: error.message });
       }
 };
 
-export { createCategory, getAllCategorys };
+const getCategoryDetails = async (req, res) => {
+      try {
+            const { categoryID } = req.params;
+            if (!categoryID) return res.status(404).json({ message: "Category ID is required !" });
+            const categoryDetails = await CategoryModel.findById(categoryID).populate("course");
+            if (!categoryDetails) return res.status(404).json({ message: "Category Details not Found !" });
+            res.status(200).json({ message: "Category Details", data: categoryDetails });
+      } catch (error) {
+            return res.status(500).json({ message: "Unable to fetch the category Details from the DB", error: error.message });
+      }
+};
+
+module.exports = { createCategory, getAllCategorys, getCategoryDetails };

@@ -47,4 +47,4 @@ const getAllSections = async (req, res) => {
       }
 };
 
-export { createSection, updatedSection, deleteSection, getAllSections };
+module.exports = { createSection, updatedSection, deleteSection, getAllSections };

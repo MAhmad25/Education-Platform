@@ -1,17 +1,24 @@
 const SubSectionModel = require("../models/SubSection.model");
 const SectionModel = require("../models/Section.model");
-
+const path = require("path");
+const cloudinary = require("cloudinary").v2;
 // Is controller ke routes se pehle multer middleware aye ga
 const createSubSection = async (req, res) => {
       try {
             // get the data
             const { title, desc, timeDuration, sectionId } = req.body;
-            const videoUrl = req.file || "";
             // validate the data
-            if (!title || !desc || !timeDuration || !videoUrl) return res.status(402).json({ message: "All field are required !" });
-            // TODO: Image upload karni ha cloudninary pe wo lazmi karna
+            if (!title || !desc || !timeDuration) return res.status(402).json({ message: "All field are required !" });
+            // TODO: Write the code for once to the utils functions
+            const video = req.file.path;
+            if (!video) return res.status(404).json({ message: "video Picture is required !" });
+            const supportedFormat = [".mp4", ".mov", ".webm"];
+            if (!supportedFormat.includes(path.extname(video))) return res.status(400).json({ message: "Only mp4 , mov and webm format type videos can be used !" });
+            const tempFile = path.resolve(video);
+            const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "CloudinaryLearning", resource_type: "auto", quality: 50 });
+            //!End of Cloud Upload
             // creating the subsection object
-            const subSection = await SubSectionModel.create({ title, desc, timeDuration, videoUrl });
+            const subSection = await SubSectionModel.create({ title, desc, timeDuration, videoUrl: cloudLink.secure_url });
             // update the section with subSection id
             const updatedSection = await SectionModel.findByIdAndUpdate(sectionId, { $push: { subSections: subSection._id } }, { new: true }).populate("subSections");
             res.status(201).json({ message: "Sub Section created !", data: updatedSection });
@@ -67,4 +74,4 @@ const deleteSubSection = async (req, res) => {
       }
 };
 
-export { createSubSection, updateSubSection, deleteSubSection };
+module.exports = { createSubSection, updateSubSection, deleteSubSection };

@@ -12,7 +12,7 @@ const updateProfile = async (req, res) => {
             //update the profile object using user.userDetails
             // and add update the userDetails in User Model
             const updatedProfile = await ProfileModel.findByIdAndUpdate(user.userDetails, { contactNumber, dob, gender, about }, { new: true });
-            res.status(200).json({ message: "Profile Updated !", data: updateProfile });
+            res.status(200).json({ message: "Profile Updated !", data: updatedProfile });
       } catch (error) {
             res.status(500).json({ message: "Unable to update the profile !", error: error.message });
       }
@@ -48,4 +48,4 @@ const getUserDetails = async (req, res) => {
       }
 };
 
-export { updateProfile, deleteUser, getUserDetails };
+module.exports = { updateProfile, deleteUser, getUserDetails };
