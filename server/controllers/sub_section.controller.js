@@ -15,7 +15,7 @@ const createSubSection = async (req, res) => {
             const supportedFormat = [".mp4", ".mov", ".webm"];
             if (!supportedFormat.includes(path.extname(video))) return res.status(400).json({ message: "Only mp4 , mov and webm format type videos can be used !" });
             const tempFile = path.resolve(video);
-            const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "CloudinaryLearning", resource_type: "auto", quality: 50 });
+            const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "EduVideos", resource_type: "auto", quality: 50 });
             //!End of Cloud Upload
             // creating the subsection object
             const subSection = await SubSectionModel.create({ title, desc, timeDuration, videoUrl: cloudLink.secure_url });

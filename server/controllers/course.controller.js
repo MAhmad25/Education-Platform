@@ -18,7 +18,7 @@ const createCourse = async (req, res) => {
             const supportedFormat = [".png", ".jpeg", ".jpg"];
             if (!supportedFormat.includes(path.extname(thumbnail))) return res.status(400).json({ message: "Only png , jpg and jpeg format type images can be used !" });
             const tempFile = path.resolve(thumbnail);
-            const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "CloudinaryLearning", resource_type: "auto" });
+            const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "EduThumbnail", resource_type: "auto" });
             //!End of Cloud Upload
             //Check if category exist in the database
             const categoryExist = await CategoryModel.findById(category);
