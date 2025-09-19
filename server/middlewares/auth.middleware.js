@@ -52,4 +52,4 @@ const isAdmin = async (req, res, next) => {
       next();
 };
 
-export { isAuthenticated, isStudent, isInstructor, isAdmin };
+module.exports = { isAuthenticated, isStudent, isInstructor, isAdmin };

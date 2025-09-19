@@ -14,7 +14,7 @@ const createSection = async (req, res) => {
       }
 };
 
-const updatedSection = async (req, res) => {
+const updateSection = async (req, res) => {
       try {
             const { sectionId, sectionName } = req.body;
             if (!sectionName || !courseID) return res.status(402).json({ message: "Section Name and Course id is required!" });
@@ -47,4 +47,4 @@ const getAllSections = async (req, res) => {
       }
 };
 
-module.exports = { createSection, updatedSection, deleteSection, getAllSections };
+module.exports = { createSection, updateSection, deleteSection, getAllSections };

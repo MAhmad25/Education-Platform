@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("../controllers/auth.controller");
-// Define auth routes here
-// Example: router.post('/login', authController.login);
+const { sendOTP, createAccount, login, resetPasswordToken, resetPassword } = require("../controllers/auth.controller");
+// Post Routes
+router.post("/sendOtp", sendOTP);
+router.post("/signup", createAccount);
+router.post("/login", login);
+router.post("/reset-password-token", resetPasswordToken);
+router.post("/reset-password", resetPassword);
+
 module.exports = router;

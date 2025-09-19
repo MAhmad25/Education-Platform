@@ -8,7 +8,7 @@ const createSubSection = async (req, res) => {
             // get the data
             const { title, desc, timeDuration, sectionId } = req.body;
             // validate the data
-            if (!title || !desc || !timeDuration) return res.status(402).json({ message: "All field are required !" });
+            if (!title || !desc || !timeDuration || !sectionId) return res.status(402).json({ message: "All field are required !" });
             // TODO: Write the code for once to the utils functions
             const video = req.file.path;
             if (!video) return res.status(404).json({ message: "video Picture is required !" });
@@ -29,7 +29,7 @@ const createSubSection = async (req, res) => {
 
 const updateSubSection = async (req, res) => {
       try {
-            const { subSectionID } = req.params;
+            const { subSectionID } = req.body;
             if (!subSectionID) return res.status(400).json({ message: "ID is required" });
             const previous = await SubSectionModel.findById(subSectionID);
             if (!previous) return res.status(404).json({ message: "SubSection not found" });
@@ -58,7 +58,7 @@ const updateSubSection = async (req, res) => {
 const deleteSubSection = async (req, res) => {
       try {
             // get the id from the params
-            const { subSectionID, sectionId } = req.params;
+            const { subSectionID, sectionId } = req.body;
             // validate the id
             if (!subSectionID) return res.status(400).json({ message: "ID is required" });
             const subSection = await SubSectionModel.findById(subSectionID);
