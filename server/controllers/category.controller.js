@@ -6,11 +6,10 @@ const createCategory = async (req, res) => {
             // validate data
             if (!categoryName) return res.status(400).json({ message: "Category name is required" });
             //create the category object
-            const newCategory = await CategoryModel.create({ name: categoryName }, { new: true });
-            return res.status(201).json({ message: `${newCategory.name} Category created Sucessfully` });
+            const newCategory = await CategoryModel.create({ name: categoryName });
+            res.status(201).json({ message: `${newCategory.name} Category created Sucessfully` });
       } catch (error) {
-            console.log(error.message);
-            return res.status(500).json({ message: "Unable to create the Category" });
+            res.status(500).json({ message: "Unable to create the Category", error: error.message });
       }
 };
 
