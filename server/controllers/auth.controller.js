@@ -99,10 +99,10 @@ const resetPasswordToken = async (req, res) => {
             // send email with url link
             const mailInfo = await mailSender(email, "Password Reset Email", `This is your password reset link: ${url} `);
             console.log({ mailInfo });
-            res.status(200).json({ message: "Password Reset with Email sent successfully !" });
+            res.status(200).json({ message: "Password Reset with Email sent successfully !", url });
       } catch (error) {
             console.log(error.message);
-            res.status(500).json({ message: "Unable to send the Email with url Check the resetPasswordToken controller " });
+            res.status(500).json({ message: "Unable to send the Email with url Check the resetPasswordToken controller ", error: error.message });
       }
 };
 

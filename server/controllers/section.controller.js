@@ -36,7 +36,7 @@ const deleteSection = async (req, res) => {
       }
 };
 
-const getAllSections = async (req, res) => {
+const getAllSections = async (_, res) => {
       try {
             const allSections = await SectionModel.find().populate("subSections");
             if (!allSections) return res.status(404).json({ message: "There is no Sections created" });

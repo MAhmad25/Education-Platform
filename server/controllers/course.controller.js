@@ -44,7 +44,7 @@ const getAllCourses = async (_, res) => {
 
 const getCourseDetails = async (req, res) => {
       try {
-            const { courseID } = req.params;
+            const { courseID } = req.body;
             if (!courseID) return res.status(404).json({ message: "Course ID is required!" });
             const courseDetails = await CourseModel.findById(courseID)
                   ?.populate("instructor")

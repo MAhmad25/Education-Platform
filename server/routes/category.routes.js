@@ -4,7 +4,7 @@ const { isAuthenticated, isAdmin } = require("../middlewares/auth.middleware");
 const { createCategory, getAllCategorys, getCategoryDetails } = require("../controllers/category.controller");
 // Get Routes
 router.get("/all-category", isAuthenticated, getAllCategorys);
-router.get("/category/:categoryID", isAuthenticated, getCategoryDetails);
+router.get("/category-details", isAuthenticated, getCategoryDetails);
 // Post Routes
 router.post("/create-catgory", isAuthenticated, isAdmin, createCategory);
 

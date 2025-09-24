@@ -27,7 +27,7 @@ const getAllCategorys = async (_, res) => {
 
 const getCategoryDetails = async (req, res) => {
       try {
-            const { categoryID } = req.params;
+            const { categoryID } = req.body;
             if (!categoryID) return res.status(404).json({ message: "Category ID is required !" });
             const categoryDetails = await CategoryModel.findById(categoryID).populate("course");
             if (!categoryDetails) return res.status(404).json({ message: "Category Details not Found !" });

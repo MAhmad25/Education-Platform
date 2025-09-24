@@ -5,7 +5,7 @@ const { isAuthenticated, isInstructor } = require("../middlewares/auth.middlewar
 const upload = require("../utils/multer");
 // Get Routes
 router.get("/all-courses", getAllCourses);
-router.get("course/:courseID", getCourseDetails);
+router.get("/course-details", getCourseDetails);
 // Post Routes
 router.post("/create-course", isAuthenticated, isInstructor, upload.single("file"), createCourse);
 
