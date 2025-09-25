@@ -8,7 +8,7 @@ const createSubSection = async (req, res) => {
             // get the data
             const { title, desc, timeDuration, sectionId } = req.body;
             // validate the data
-            if (!title || !desc || !timeDuration || !sectionId) return res.status(402).json({ message: "All field are required !" });
+            if (!title || !desc || !timeDuration || !sectionId) return res.status(400).json({ message: "All field are required !" });
             // TODO: Write the code for once to the utils functions
             const video = req.file.path;
             if (!video) return res.status(404).json({ message: "video Picture is required !" });
@@ -32,7 +32,7 @@ const updateSubSection = async (req, res) => {
             const { subSectionID } = req.body;
             if (!subSectionID) return res.status(400).json({ message: "ID is required" });
             const previous = await SubSectionModel.findById(subSectionID);
-            if (!previous) return res.status(404).json({ message: "SubSection not found" });
+            if (!previous) return res.status(400).json({ message: "SubSection not found" });
 
             // take only keys actually provided by the client (ignore undefined)
             // TODO: need to study how Object.fromEntries Works

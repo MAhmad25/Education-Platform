@@ -9,8 +9,8 @@ const createCourse = async (req, res) => {
             // get all the data from req.body
             const { courseName, courseDesc, whatYouWillLearn, price, category } = req.body;
             // validate the data
-            if (!courseName || !courseDesc || !whatYouWillLearn || !price || !category || !req.file) {
-                  return res.status(402).json({ message: "All fields are required" });
+            if (!courseName || !courseDesc || !whatYouWillLearn || !price || !category) {
+                  return res.status(400).json({ message: "All fields are required" });
             }
             //  TODO Write the code for once to the utils functions
             const thumbnail = req.file.path;
@@ -21,6 +21,7 @@ const createCourse = async (req, res) => {
             const cloudLink = await cloudinary.uploader.upload(tempFile, { folder: "EduThumbnail", resource_type: "auto" });
             //!End of Cloud Upload
             //Check if category exist in the database
+            // !Yaha pr ID ja rahi ha String nahi
             const categoryExist = await CategoryModel.findById(category);
             if (!categoryExist) return res.status(400).json({ message: `Sorry ! ${category} like category does not exists ! Report to the Admin` });
             //Create the new Course in db
@@ -63,7 +64,8 @@ const getCourseDetails = async (req, res) => {
                   })
                   ?.populate({
                         path: "enrolledStudents",
-                  });
+                  })
+                  ?.populate("category");
             if (!courseDetails) return res.status(404).json({ message: "Unable to find the Course ! ", error: error.message });
             res.status(200).json({ message: "Here is all the Course Details", data: courseDetails });
       } catch (error) {

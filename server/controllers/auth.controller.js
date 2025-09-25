@@ -15,11 +15,11 @@ const sendOTP = async (req, res) => {
             if (alreadyExist) return res.status(401).json({ message: "Email already being used" });
             //Generate OTP
             const otp = generateNumericOtp();
-            console.log("Type of OTP: ", typeof otp, otp); // Type of otp is number
             // Make a otp model
             await OTPModel.create({ otp, email, used: true, purpose: "Email Verification Code" });
             res.status(201).json({
                   success: true,
+                  otp,
                   message: "Email Verification Code is sent to your email",
             });
       } catch (error) {
@@ -85,7 +85,7 @@ const login = async (req, res) => {
             res.cookie("access_token", token, {
                   httpOnly: true,
                   // sameSite: "strict",
-                  maxAge: 7 * 24 * 60 * 60,
+                  maxAge: 7 * 24 * 60 * 60 * 1000,
             })
                   // then send the user response
                   .json({ message: "Welcome to your profile" });

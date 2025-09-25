@@ -16,8 +16,8 @@ const createSection = async (req, res) => {
 
 const updateSection = async (req, res) => {
       try {
-            const { sectionId, sectionName } = req.body;
-            if (!sectionName || !courseID) return res.status(402).json({ message: "Section Name and Course id is required!" });
+            const { sectionId, sectionName, courseID } = req.body;
+            if (!sectionName || !courseID || !sectionId) return res.status(400).json({ message: "Section Name and Course id is required!" });
             const updatedSection = await SectionModel.findByIdAndUpdate(sectionId, { sectionName }, { new: true });
             res.status(200).json({ message: "Section Name is updated", data: updatedSection });
       } catch (error) {
@@ -27,7 +27,8 @@ const updateSection = async (req, res) => {
 
 const deleteSection = async (req, res) => {
       try {
-            const { sectionId, courseID } = req.params;
+            const { sectionId, courseID } = req.body;
+            if (!sectionId || !courseID) return res.status(400).json({ message: "Section ID and Course id is required!" });
             await SectionModel.findByIdAndDelete(sectionId);
             await CourseModel.findByIdAndUpdate(courseID, { $pull: { courseContent: sectionId } });
             res.status(200).json({ message: "Section Deleted !" });
