@@ -1,0 +1,5 @@
+{
+      "editor.suggest.showStatusBar": false,
+      "workbench.statusBar.visible": false,
+      "debug.enableStatusBarColor": true
+}
