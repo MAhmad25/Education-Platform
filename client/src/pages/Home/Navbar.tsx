@@ -2,8 +2,9 @@
 // Desktop: left links | center logo | right links + CTA  (all visible)
 // Mobile <768px: logo left + hamburger right → animated slide-down drawer
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useLayoutEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Button from './Button';
 
 interface NavLinkProps {
@@ -12,10 +13,15 @@ interface NavLinkProps {
   children: ReactNode;
 }
 
+function getInitials(firstName: string, lastName: string): string {
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const check = () => setMobile(window.innerWidth < 768);
@@ -24,11 +30,13 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  useEffect(() => { if (!mobile) setOpen(false); }, [mobile]);
+  // Close drawer when switching to desktop (derived state)
+  const isDrawerOpen = mobile && open;
 
   // Close mobile menu on route change
-  useEffect(() => {
-    setOpen(false);
+  useLayoutEffect(() => {
+    const id = requestAnimationFrame(() => setOpen(false));
+    return () => cancelAnimationFrame(id);
   }, [location]);
 
   const allLinks = [
@@ -64,12 +72,37 @@ export default function Navbar() {
         {!mobile && (
           <div className="flex items-center h-full">
             <NavLink to="/" hash="teach">Teach</NavLink>
-            <NavLink to="/login">Sign in</NavLink>
-            <Link to="/signup">
-              <Button variant="primary" style={{ height: '54px', borderRadius: 0 }}>
-                Get started →
-              </Button>
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-3 px-[1.4rem] h-[54px] border-r border-ink-15 font-mono text-[11px] uppercase tracking-[0.1em] text-ink hover:bg-ink hover:text-paper transition-colors duration-150"
+                >
+                  <span
+                    className="w-8 h-8 border-2 border-[#f9f5cb] bg-[#ff5718] text-[#f9f5cb] font-mono text-xs flex items-center justify-center"
+                    style={{ borderRadius: '50%' }}
+                  >
+                    {getInitials(user.firstName, user.lastName)}
+                  </span>
+                  Profile
+                </Link>
+                <button
+                  onClick={logout}
+                  className="font-mono text-[11px] uppercase tracking-[0.1em] px-[1.4rem] h-[54px] flex items-center border-r border-ink-15 bg-transparent text-ink hover:bg-ink hover:text-paper transition-colors duration-150 whitespace-nowrap"
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <NavLink to="/login">Sign in</NavLink>
+                <Link to="/signup">
+                  <Button variant="primary" style={{ height: '54px', borderRadius: 0 }}>
+                    Get started →
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         )}
 
@@ -101,8 +134,8 @@ export default function Navbar() {
         <div
           className="fixed top-[54px] left-0 right-0 z-[99] bg-paper border-b-2 border-ink shadow-[0_8px_40px_rgba(15,13,11,0.12)] transition-all duration-350"
           style={{
-            transform: open ? 'translateY(0)' : 'translateY(-110%)',
-            opacity:   open ? 1 : 0,
+            transform: isDrawerOpen ? 'translateY(0)' : 'translateY(-110%)',
+            opacity:   isDrawerOpen ? 1 : 0,
             transitionTimingFunction: 'cubic-bezier(.16,1,.3,1)',
           }}
         >
@@ -118,23 +151,54 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
-            <li className="border-b border-ink-15">
-              <Link
-                to="/login"
-                className="flex items-center gap-4 px-6 py-5 font-mono text-[13px] uppercase tracking-[0.08em] text-ink"
-              >
-                <span className="text-red font-mono text-[12px]">→</span>
-                Sign in
-              </Link>
-            </li>
+            {isAuthenticated && user ? (
+              <>
+                <li className="border-b border-ink-15">
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-4 px-6 py-5 font-mono text-[13px] uppercase tracking-[0.08em] text-ink"
+                  >
+                    <span className="text-red font-mono text-[12px]">→</span>
+                    <span
+                      className="w-8 h-8 border-2 border-[#f9f5cb] bg-[#ff5718] text-[#f9f5cb] font-mono text-xs flex items-center justify-center"
+                      style={{ borderRadius: '50%' }}
+                    >
+                      {getInitials(user.firstName, user.lastName)}
+                    </span>
+                    Profile
+                  </Link>
+                </li>
+                <li className="border-b border-ink-15">
+                  <button
+                    onClick={logout}
+                    className="w-full flex items-center gap-4 px-6 py-5 font-mono text-[13px] uppercase tracking-[0.08em] text-ink bg-transparent border-none text-left"
+                  >
+                    <span className="text-red font-mono text-[12px]">→</span>
+                    Log Out
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li className="border-b border-ink-15">
+                <Link
+                  to="/login"
+                  className="flex items-center gap-4 px-6 py-5 font-mono text-[13px] uppercase tracking-[0.08em] text-ink"
+                >
+                  <span className="text-red font-mono text-[12px]">→</span>
+                  Sign in
+                </Link>
+              </li>
+            )}
           </ul>
-          <div className="p-6">
-            <Link to="/signup">
-              <Button variant="primary" className="w-full justify-center" style={{ padding: '16px' }}>
-                Get started →
-              </Button>
-            </Link>
-          </div>
+          {!isAuthenticated && (
+            <div className="p-6">
+              <Link to="/signup">
+                <Button variant="primary" className="w-full justify-center" style={{ padding: '16px' }}>
+                  Get started →
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </>
