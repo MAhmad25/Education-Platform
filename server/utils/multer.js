@@ -6,8 +6,6 @@ const storage = multer.diskStorage({
             cb(null, "./uploads/");
       },
       filename: (_, file, cb) => {
-            console.log({ file });
-            console.log("Check in multer.js in utils folder");
             crypto.randomBytes(10, (error, buff) => {
                   if (error) return;
                   const fileName = buff.toString("hex") + path.extname(file.originalname);

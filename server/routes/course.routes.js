@@ -8,5 +8,4 @@ router.get("/all-courses", getAllCourses);
 router.get("/course-details", getCourseDetails);
 // Post Routes
 router.post("/create-course", isAuthenticated, isInstructor, uploads.single("file"), createCourse);
-
 module.exports = router;

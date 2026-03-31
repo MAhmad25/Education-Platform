@@ -13,7 +13,6 @@ app.use(
 );
 app.use(express.json()); // ?Middleware for parsing body data
 app.use(cookieParser());
-
 const authRoutes = require("./routes/auth.routes");
 const categoryRoutes = require("./routes/category.routes");
 const courseRoutes = require("./routes/course.routes");
